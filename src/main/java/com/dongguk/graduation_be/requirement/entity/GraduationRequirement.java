@@ -29,7 +29,7 @@ public class GraduationRequirement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "입학 연도는 필수입니다.")
+    @NotNull(message = "entranceYear is required")
     @Column(nullable = false)
     private Integer entranceYear;
 
@@ -37,17 +37,17 @@ public class GraduationRequirement {
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
-    @NotNull(message = "교육과정은 필수입니다.")
+    @NotNull(message = "curriculum is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Curriculum curriculum;
 
-    @NotNull(message = "전공 유형은 필수입니다.")
+    @NotNull(message = "majorType is required")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MajorType majorType;
 
-    @NotNull(message = "최소 학점은 필수입니다.")
+    @NotNull(message = "minimumCredits is required")
     @Positive
     @Column(nullable = false)
     private Integer minimumCredits;
@@ -56,10 +56,23 @@ public class GraduationRequirement {
     @Builder.Default
     private List<AreaRequirement> areaRequirements = new ArrayList<>();
 
-    /* TODO: 추후 확정 시 추가될 필드들
-       private Integer minEnglishScore;   // 영어 성적
-       private Boolean needsGraduationExam; // 졸업시험 여부
-       private Boolean needsThesis;         // 졸업논문 여부
-    */
+    public void update(
+            Integer entranceYear,
+            Department department,
+            Curriculum curriculum,
+            MajorType majorType,
+            Integer minimumCredits
+    ) {
+        this.entranceYear = entranceYear;
+        this.department = department;
+        this.curriculum = curriculum;
+        this.majorType = majorType;
+        this.minimumCredits = minimumCredits;
+    }
 
+    /* TODO: add optional fields later
+       private Integer minEnglishScore;
+       private Boolean needsGraduationExam;
+       private Boolean needsThesis;
+    */
 }

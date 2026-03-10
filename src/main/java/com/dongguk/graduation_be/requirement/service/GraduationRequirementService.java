@@ -1,6 +1,8 @@
 package com.dongguk.graduation_be.requirement.service;
 
 import com.dongguk.graduation_be.requirement.dto.request.CreateGraduationRequirementRequest;
+import com.dongguk.graduation_be.requirement.dto.request.UpdateGraduationRequirementRequest;
+import com.dongguk.graduation_be.requirement.dto.response.GraduationRequirementResponse;
 import com.dongguk.graduation_be.requirement.entity.Department;
 import com.dongguk.graduation_be.requirement.entity.GraduationRequirement;
 import com.dongguk.graduation_be.requirement.repository.DepartmentRepository;
@@ -8,6 +10,8 @@ import com.dongguk.graduation_be.requirement.repository.GraduationRequirementRep
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,12 +21,18 @@ public class GraduationRequirementService {
 
     @Transactional
     public Long createGraduationRequirement(CreateGraduationRequirementRequest request) {
-
-        // 1. DTO에 있는 ID(Long)로 진짜 Department 객체를 찾아옵니다.
         Department department = departmentRepository.findById(request.getDepartmentId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 학과를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("Department not found"));
 
-        // 2. 찾아온 객체(department)를 빌더에 넣어줍니다.
+        if (graduationRequirementRepository.existsByEntranceYearAndDepartmentIdAndCurriculumAndMajorType(
+                request.getEntranceYear(),
+                request.getDepartmentId(),
+                request.getCurriculum(),
+                request.getMajorType()
+        )) {
+            throw new IllegalStateException("Graduation requirement already exists for this key");
+        }
+
         GraduationRequirement graduationRequirement = GraduationRequirement.builder()
                 .entranceYear(request.getEntranceYear())
                 .department(department)
@@ -32,5 +42,47 @@ public class GraduationRequirementService {
                 .build();
 
         return graduationRequirementRepository.save(graduationRequirement).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GraduationRequirementResponse> getAllGraduationRequirements() {
+        return graduationRequirementRepository.findAll().stream()
+                .map(GraduationRequirementResponse::from)
+                .toList();
+    }
+
+    @Transactional
+    public void updateGraduationRequirement(UpdateGraduationRequirementRequest request) {
+        GraduationRequirement graduationRequirement = graduationRequirementRepository.findById(request.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Graduation requirement not found"));
+
+        Department department = departmentRepository.findById(request.getDepartmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Department not found"));
+
+        if (graduationRequirementRepository.existsByEntranceYearAndDepartmentIdAndCurriculumAndMajorTypeAndIdNot(
+                request.getEntranceYear(),
+                request.getDepartmentId(),
+                request.getCurriculum(),
+                request.getMajorType(),
+                request.getId()
+        )) {
+            throw new IllegalStateException("Graduation requirement already exists for this key");
+        }
+
+        graduationRequirement.update(
+                request.getEntranceYear(),
+                department,
+                request.getCurriculum(),
+                request.getMajorType(),
+                request.getMinimumCredits()
+        );
+    }
+
+    @Transactional
+    public void deleteGraduationRequirement(Long id) {
+        GraduationRequirement graduationRequirement = graduationRequirementRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Graduation requirement not found"));
+
+        graduationRequirementRepository.delete(graduationRequirement);
     }
 }
