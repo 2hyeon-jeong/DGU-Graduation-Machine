@@ -3,8 +3,10 @@ package com.dongguk.graduation_be.requirement.service;
 import com.dongguk.graduation_be.requirement.dto.request.CreateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.response.GraduationRequirementResponse;
+import com.dongguk.graduation_be.requirement.entity.Curriculum;
 import com.dongguk.graduation_be.requirement.entity.Department;
 import com.dongguk.graduation_be.requirement.entity.GraduationRequirement;
+import com.dongguk.graduation_be.requirement.entity.MajorType;
 import com.dongguk.graduation_be.requirement.repository.DepartmentRepository;
 import com.dongguk.graduation_be.requirement.repository.GraduationRequirementRepository;
 import lombok.RequiredArgsConstructor;
@@ -84,5 +86,23 @@ public class GraduationRequirementService {
                 .orElseThrow(() -> new IllegalArgumentException("Graduation requirement not found"));
 
         graduationRequirementRepository.delete(graduationRequirement);
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getMinimumCredits(
+            Integer entranceYear,
+            Long departmentId,
+            Curriculum curriculum,
+            MajorType majorType
+    ) {
+        return graduationRequirementRepository
+                .findByEntranceYearAndDepartmentIdAndCurriculumAndMajorType(
+                        entranceYear,
+                        departmentId,
+                        curriculum,
+                        majorType
+                )
+                .map(GraduationRequirement::getMinimumCredits)
+                .orElseThrow(() -> new IllegalArgumentException("Graduation requirement not found for this key"));
     }
 }

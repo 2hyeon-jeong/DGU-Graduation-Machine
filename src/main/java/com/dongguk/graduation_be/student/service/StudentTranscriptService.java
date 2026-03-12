@@ -15,17 +15,18 @@ import java.util.*;
 @Service
 public class StudentTranscriptService {
 
-    private static final String YEAR = "년도";
-    private static final String SEMESTER = "학기";
-    private static final String COURSE_CODE = "학수번호";
-    private static final String SECTION = "분반";
-    private static final String COURSE_NAME = "교과목명";
-    private static final String CREDITS = "학점";
-    private static final String GRADE = "등급";
-    private static final String DELETED_GRADE_NAME = "성적삭제명";
+    private static final String YEAR = "\uB144\uB3C4";
+    private static final String SEMESTER = "\uD559\uAE30";
+    private static final String COMPLETION_TYPE = "\uC774\uC218\uAD6C\uBD84";
+    private static final String COURSE_CODE = "\uD559\uC218\uBC88\uD638";
+    private static final String SECTION = "\uBD84\uBC18";
+    private static final String COURSE_NAME = "\uAD50\uACFC\uBAA9\uBA85";
+    private static final String CREDITS = "\uD559\uC810";
+    private static final String GRADE = "\uB4F1\uAE09";
+    private static final String DELETED_GRADE_NAME = "\uC131\uC801\uC0AD\uC81C\uBA85";
 
     private static final List<String> REQUIRED_HEADERS = List.of(
-            YEAR, SEMESTER, COURSE_CODE, SECTION, COURSE_NAME, CREDITS, GRADE
+            YEAR, SEMESTER, COMPLETION_TYPE, COURSE_CODE, SECTION, COURSE_NAME, CREDITS, GRADE
     );
 
     public TranscriptParseResponse parse(MultipartFile file) {
@@ -35,7 +36,7 @@ public class StudentTranscriptService {
         List<TranscriptRowErrorResponse> errors = new ArrayList<>();
 
         try (InputStream inputStream = file.getInputStream();
-             Workbook workbook = new XSSFWorkbook(inputStream)) {
+            Workbook workbook = new XSSFWorkbook(inputStream)) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
             if (headerRow == null) {
@@ -109,6 +110,7 @@ public class StudentTranscriptService {
     private TranscriptRowResponse parseRow(Row row, Map<String, Integer> headerIndex) {
         String yearValue = getRequiredValue(row, headerIndex, YEAR);
         String semester = getRequiredValue(row, headerIndex, SEMESTER);
+        String completionType = getRequiredValue(row, headerIndex, COMPLETION_TYPE);
         String courseCode = getRequiredValue(row, headerIndex, COURSE_CODE);
         String section = getRequiredValue(row, headerIndex, SECTION);
         String courseName = getRequiredValue(row, headerIndex, COURSE_NAME);
@@ -122,6 +124,7 @@ public class StudentTranscriptService {
         return TranscriptRowResponse.builder()
                 .year(parseInteger(yearValue, YEAR))
                 .semester(semester)
+                .completionType(completionType)
                 .courseCode(courseCode)
                 .section(section)
                 .courseName(courseName)

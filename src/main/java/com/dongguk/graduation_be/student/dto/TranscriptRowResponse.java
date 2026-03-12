@@ -8,6 +8,7 @@ import lombok.Data;
 public class TranscriptRowResponse {
     private Integer year;
     private String semester;
+    private String completionType;
     private String courseCode;
     private String section;
     private String courseName;
