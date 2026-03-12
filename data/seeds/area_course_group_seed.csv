@@ -1,0 +1,10 @@
+area_name,group_name,is_essential,min_count,note
+교양,기본소양,true,2,3개 중 2개 이상 이수
+MSC,MSC-수학,true,0,필수과목은 CourseGroupItem.is_essential로 판정
+MSC,MSC-실험,true,1,3개 중 1개 이상 이수
+전공,전공필수-기초프로그래밍,true,1,단일 필수 과목
+전공,전공필수-자료구조,true,1,단일 필수 과목
+전공,전공필수-알고리즘,true,1,단일 필수 과목
+전공,전공필수-컴퓨터구성,true,1,단일 필수 과목
+전공,전공필수-어드벤처디자인,true,1,단일 필수 과목
+전공,전공필수-시스템소프트웨어,true,1,단일 필수 과목
