@@ -1,18 +1,20 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine AS builder
+WORKDIR /build
 
-# 컨테이너 내부에서 작업할 디렉토리를 설정
-WORKDIR /app
-
-# 빌드 도구인 Gradle 설정 파일들을 먼저 복사 (캐싱을 통한 속도 향상)
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle.kts settings.gradle.kts ./
-
-# 윈도우 환경에서 만든 gradlew 파일이 맥/리눅스에서 실행되도록 권한 부여
+RUN sed -i 's/\r$//' ./gradlew
 RUN chmod +x ./gradlew
-
 RUN ./gradlew --no-daemon dependencies
 
-COPY . .
+COPY src src
+RUN ./gradlew --no-daemon bootJar
 
-CMD ["./gradlew", "bootRun"]
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+COPY --from=builder /build/build/libs/*.jar app.jar
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
