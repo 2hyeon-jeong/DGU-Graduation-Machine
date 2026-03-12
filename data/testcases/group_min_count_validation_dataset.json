@@ -1,0 +1,207 @@
+{
+  "description": "Validation datasets for group minCount checks (and deleted-grade behavior).",
+  "expected_missed_key_format": "group_min_count:{groupName}",
+  "cases": [
+    {
+      "caseId": "TC01_ALL_PASS_MINCOUNT",
+      "note": "All minCount groups are satisfied.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2001", "section": "01", "courseName": "기초프로그래밍", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2007", "section": "01", "courseName": "자료구조", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2008", "section": "01", "courseName": "알고리즘", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2011", "section": "01", "courseName": "컴퓨터구성", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2004", "section": "01", "courseName": "어드벤처디자인", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC4001", "section": "01", "courseName": "운영체제", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4041", "section": "01", "courseName": "공학경제", "credits": 3.0, "grade": "A+", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4002", "section": "01", "courseName": "일반물리학및실험1", "credits": 4.0, "grade": "B+", "deletedGradeName": null }
+      ],
+      "expectedMissed": {}
+    },
+    {
+      "caseId": "TC02_BASIC_SHORTAGE_1",
+      "note": "기본소양 is 3중2 but only 1 completed.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4002", "section": "01", "courseName": "일반물리학및실험1", "credits": 4.0, "grade": "B+", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC03_LAB_SHORTAGE_1",
+      "note": "MSC-실험 is 3중1 but none completed.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4041", "section": "01", "courseName": "공학경제", "credits": 3.0, "grade": "A+", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:MSC-실험": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC04_BASIC_AND_LAB_SHORTAGE",
+      "note": "기본소양 0/2 and MSC-실험 0/1.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2001", "section": "01", "courseName": "기초프로그래밍", "credits": 3.0, "grade": "A0", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 2.0,
+        "group_min_count:MSC-실험": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC05_ONLY_MAJOR_REQUIRED_PASS",
+      "note": "All major single-course groups pass; basic/lab fail.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2001", "section": "01", "courseName": "기초프로그래밍", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2007", "section": "01", "courseName": "자료구조", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2008", "section": "01", "courseName": "알고리즘", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2011", "section": "01", "courseName": "컴퓨터구성", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC2004", "section": "01", "courseName": "어드벤처디자인", "credits": 3.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "전공", "courseCode": "CSC4001", "section": "01", "courseName": "운영체제", "credits": 3.0, "grade": "A0", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 2.0,
+        "group_min_count:MSC-실험": 1.0
+      }
+    },
+    {
+      "caseId": "TC06_DELETED_RECORD_NOT_COUNTED",
+      "note": "Deleted grade row should not count to minCount.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "F", "deletedGradeName": "재수강삭제(OLD재수강)" },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4041", "section": "01", "courseName": "공학경제", "credits": 3.0, "grade": "A+", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4002", "section": "01", "courseName": "일반물리학및실험1", "credits": 4.0, "grade": "B+", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC07_DELETED_BLANK_COUNTS_ACTIVE",
+      "note": "Blank deletedGradeName counts as active record.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": "" },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4041", "section": "01", "courseName": "공학경제", "credits": 3.0, "grade": "A+", "deletedGradeName": "" },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4003", "section": "01", "courseName": "일반화학및실험1", "credits": 4.0, "grade": "B0", "deletedGradeName": "" }
+      ],
+      "expectedMissed": {
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC08_DUPLICATE_CODE_NOT_DOUBLE_COUNTED",
+      "note": "Same course code appears twice but should count once (set behavior).",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "2학기", "completionType": "학기", "courseCode": "EGC7026", "section": "02", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4004", "section": "01", "courseName": "일반생물학및실험1", "credits": 3.0, "grade": "B+", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC09_UNKNOWN_COURSES_ONLY",
+      "note": "No known mapped course codes.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "RGC0017", "section": "01", "courseName": "자아와명상1", "credits": 1.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "RGC0018", "section": "01", "courseName": "자아와명상2", "credits": 1.0, "grade": "P", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 2.0,
+        "group_min_count:MSC-실험": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC10_BASIC_EXACTLY_TWO_PASS",
+      "note": "Basic literacy exactly 2 meets requirement.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC7026", "section": "01", "courseName": "기술창조와특허", "credits": 2.0, "grade": "P", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "EGC4039", "section": "01", "courseName": "공학윤리", "credits": 2.0, "grade": "A0", "deletedGradeName": null },
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4002", "section": "01", "courseName": "일반물리학및실험1", "credits": 4.0, "grade": "A0", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC11_LAB_EXACTLY_ONE_PASS",
+      "note": "MSC-실험 exactly 1 meets requirement.",
+      "rows": [
+        { "year": 2025, "semester": "1학기", "completionType": "학기", "courseCode": "PRI4003", "section": "01", "courseName": "일반화학및실험1", "credits": 4.0, "grade": "A0", "deletedGradeName": null }
+      ],
+      "expectedMissed": {
+        "group_min_count:기본소양": 2.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    },
+    {
+      "caseId": "TC12_NO_ROWS_MAX_SHORTAGE",
+      "note": "Edge case: empty transcript list.",
+      "rows": [],
+      "expectedMissed": {
+        "group_min_count:기본소양": 2.0,
+        "group_min_count:MSC-실험": 1.0,
+        "group_min_count:전공필수-기초프로그래밍": 1.0,
+        "group_min_count:전공필수-자료구조": 1.0,
+        "group_min_count:전공필수-알고리즘": 1.0,
+        "group_min_count:전공필수-컴퓨터구성": 1.0,
+        "group_min_count:전공필수-어드벤처디자인": 1.0,
+        "group_min_count:전공필수-시스템소프트웨어": 1.0
+      }
+    }
+  ]
+}
