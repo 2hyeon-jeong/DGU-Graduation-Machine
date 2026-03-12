@@ -1,0 +1,8 @@
+.git
+.gradle
+build
+bin
+.idea
+*.iml
+data/raw
+data/testcases
