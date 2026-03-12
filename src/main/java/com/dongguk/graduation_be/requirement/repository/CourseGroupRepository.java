@@ -4,4 +4,6 @@ import com.dongguk.graduation_be.requirement.entity.CourseGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseGroupRepository extends JpaRepository<CourseGroup, Long> {
+    boolean existsByGroupName(String groupName);
+    boolean existsByGroupNameAndIdNot(String groupName, Long id);
 }

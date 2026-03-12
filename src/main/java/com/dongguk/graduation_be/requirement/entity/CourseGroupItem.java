@@ -1,6 +1,7 @@
 package com.dongguk.graduation_be.requirement.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -31,4 +32,8 @@ public class CourseGroupItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_code_id", nullable = false)
     private Course course;
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isEssential;
 }
