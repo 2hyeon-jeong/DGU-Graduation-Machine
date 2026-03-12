@@ -35,6 +35,13 @@ public class AreaCourseGroup {
     @PositiveOrZero
     @Column(nullable = false)
     private Integer minCount;
+
+    public void update(AreaRequirement areaRequirement, CourseGroup courseGroup, Boolean isEssential, Integer minCount) {
+        this.areaRequirement = areaRequirement;
+        this.courseGroup = courseGroup;
+        this.isEssential = isEssential;
+        this.minCount = minCount;
+    }
 }
 
 
