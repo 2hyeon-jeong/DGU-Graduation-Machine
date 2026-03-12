@@ -20,4 +20,8 @@ public class CourseGroup {
     @NotBlank(message = "과목 그룹 이름은 필수입니다.")
     @Column(nullable = false)
     private String groupName;
+
+    public void updateGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

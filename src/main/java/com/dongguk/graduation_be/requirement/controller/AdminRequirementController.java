@@ -3,13 +3,16 @@ package com.dongguk.graduation_be.requirement.controller;
 import com.dongguk.graduation_be.requirement.dto.request.CreateDepartmentRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateAreaRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateCourseRequest;
+import com.dongguk.graduation_be.requirement.dto.request.CreateCourseGroupRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.response.CourseCsvImportResponse;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateDepartmentRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateCourseRequest;
+import com.dongguk.graduation_be.requirement.dto.request.UpdateCourseGroupRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.service.AreaRequirementService;
 import com.dongguk.graduation_be.requirement.service.CourseService;
+import com.dongguk.graduation_be.requirement.service.CourseGroupService;
 import com.dongguk.graduation_be.requirement.service.DepartmentService;
 import com.dongguk.graduation_be.requirement.service.GraduationRequirementService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdminRequirementController {
     private final AreaRequirementService areaRequirementService;
     private final CourseService courseService;
+    private final CourseGroupService courseGroupService;
     private final DepartmentService departmentService;
     private final GraduationRequirementService graduationRequirementService;
 
@@ -170,6 +174,45 @@ public class AdminRequirementController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error importing courses from CSV: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/course-groups")
+    public ResponseEntity<?> getAllCourseGroups() {
+        try {
+            return ResponseEntity.ok(courseGroupService.getAllCourseGroups());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching course groups: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/course-groups")
+    public ResponseEntity<String> createCourseGroup(@RequestBody CreateCourseGroupRequest request) {
+        try {
+            Long newId = courseGroupService.createCourseGroup(request);
+            return ResponseEntity.ok("CourseGroup created with ID: " + newId);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error creating course group: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/course-groups")
+    public ResponseEntity<String> updateCourseGroup(@RequestBody UpdateCourseGroupRequest request) {
+        try {
+            courseGroupService.updateCourseGroup(request);
+            return ResponseEntity.ok("CourseGroup updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error updating course group: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/course-groups/{id}")
+    public ResponseEntity<String> deleteCourseGroup(@PathVariable Long id) {
+        try {
+            courseGroupService.deleteCourseGroup(id);
+            return ResponseEntity.ok("CourseGroup deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting course group: " + e.getMessage());
         }
     }
 
