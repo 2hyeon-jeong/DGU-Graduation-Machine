@@ -26,6 +26,7 @@ public class GraduationCreditCheckService {
     private final LiberalCreditCalculatorService liberalCreditCalculatorService;
     private final GpaCalculatorService gpaCalculatorService;
     private final GroupMinCountCheckService groupMinCountCheckService;
+    private final GroupEssentialCheckService groupEssentialCheckService;
     private final GraduationRequirementRepository graduationRequirementRepository;
     private final AreaRequirementRepository areaRequirementRepository;
 
@@ -36,6 +37,7 @@ public class GraduationCreditCheckService {
             LiberalCreditCalculatorService liberalCreditCalculatorService,
             GpaCalculatorService gpaCalculatorService,
             GroupMinCountCheckService groupMinCountCheckService,
+            GroupEssentialCheckService groupEssentialCheckService,
             GraduationRequirementRepository graduationRequirementRepository,
             AreaRequirementRepository areaRequirementRepository
     ) {
@@ -45,6 +47,7 @@ public class GraduationCreditCheckService {
         this.liberalCreditCalculatorService = liberalCreditCalculatorService;
         this.gpaCalculatorService = gpaCalculatorService;
         this.groupMinCountCheckService = groupMinCountCheckService;
+        this.groupEssentialCheckService = groupEssentialCheckService;
         this.graduationRequirementRepository = graduationRequirementRepository;
         this.areaRequirementRepository = areaRequirementRepository;
     }
@@ -76,7 +79,7 @@ public class GraduationCreditCheckService {
 
         boolean passed = totalCredits >= minimumCredits;
         double shortage = Math.max(0.0, minimumCredits - totalCredits);
-        Map<String, Double> missed = new LinkedHashMap<>();
+        Map<String, Object> missed = new LinkedHashMap<>();
         if (shortage > 0.0) {
             missed.put("total_credit", shortage);
         }
@@ -119,6 +122,13 @@ public class GraduationCreditCheckService {
         }
 
         missed.putAll(groupMinCountCheckService.calculateGroupMinCountMissed(
+                entranceYear,
+                departmentId,
+                curriculum,
+                majorType,
+                transcript.getRows()
+        ));
+        missed.putAll(groupEssentialCheckService.calculateEssentialMissed(
                 entranceYear,
                 departmentId,
                 curriculum,

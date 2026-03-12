@@ -11,4 +11,5 @@ public interface CourseGroupItemRepository extends JpaRepository<CourseGroupItem
     boolean existsByCourseGroupIdAndCourseIdAndIdNot(Long courseGroupId, Long courseId, Long id);
     Optional<CourseGroupItem> findByCourseGroupIdAndCourseId(Long courseGroupId, Long courseId);
     List<CourseGroupItem> findByCourseGroupIdIn(List<Long> courseGroupIds);
+    List<CourseGroupItem> findByCourseGroupIdInAndIsEssentialTrue(List<Long> courseGroupIds);
 }
