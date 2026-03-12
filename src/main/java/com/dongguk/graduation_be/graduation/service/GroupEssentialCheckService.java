@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class GroupMinCountCheckService {
+public class GroupEssentialCheckService {
     private final GraduationRequirementRepository graduationRequirementRepository;
     private final AreaRequirementRepository areaRequirementRepository;
     private final AreaCourseGroupRepository areaCourseGroupRepository;
     private final CourseGroupItemRepository courseGroupItemRepository;
 
     @Transactional(readOnly = true)
-    public Map<String, Object> calculateGroupMinCountMissed(
+    public Map<String, Object> calculateEssentialMissed(
             Integer entranceYear,
             Long departmentId,
             Curriculum curriculum,
@@ -48,32 +48,23 @@ public class GroupMinCountCheckService {
         }
 
         List<Long> areaIds = areaRequirements.stream().map(AreaRequirement::getId).toList();
-        List<AreaCourseGroup> essentialMappings = areaCourseGroupRepository
-                .findByAreaRequirementIdInAndIsEssentialTrue(areaIds)
-                .stream()
-                .filter(mapping -> mapping.getMinCount() != null && mapping.getMinCount() > 0)
-                .toList();
+        List<AreaCourseGroup> targetMappings = areaCourseGroupRepository
+                .findByAreaRequirementIdInAndIsEssentialTrue(areaIds);
 
-        if (essentialMappings.isEmpty()) {
+        if (targetMappings.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        List<Long> groupIds = essentialMappings.stream()
+        List<Long> groupIds = targetMappings.stream()
                 .map(mapping -> mapping.getCourseGroup().getId())
                 .distinct()
                 .toList();
 
-        Map<Long, Set<String>> groupCourseCodes = courseGroupItemRepository.findByCourseGroupIdIn(groupIds).stream()
-                .collect(Collectors.groupingBy(
-                        item -> item.getCourseGroup().getId(),
-                        Collectors.mapping(item -> item.getCourse().getCourseCode(), Collectors.toSet())
-                ));
-        Map<Long, Set<String>> essentialCodesByGroup = courseGroupItemRepository
+        Map<Long, List<com.dongguk.graduation_be.requirement.entity.CourseGroupItem>> essentialItemsByGroup = courseGroupItemRepository
                 .findByCourseGroupIdInAndIsEssentialTrue(groupIds)
                 .stream()
                 .collect(Collectors.groupingBy(
-                        item -> item.getCourseGroup().getId(),
-                        Collectors.mapping(item -> item.getCourse().getCourseCode(), Collectors.toSet())
+                        item -> item.getCourseGroup().getId()
                 ));
 
         Set<String> completedCourseCodes = transcriptRows.stream()
@@ -85,22 +76,24 @@ public class GroupMinCountCheckService {
                 .collect(Collectors.toSet());
 
         Map<String, Object> missed = new LinkedHashMap<>();
-        for (AreaCourseGroup mapping : essentialMappings) {
+        for (AreaCourseGroup mapping : targetMappings) {
             Long groupId = mapping.getCourseGroup().getId();
-            // If a group has essential-course rules, emit only group_essential to avoid duplicated failure reasons.
-            if (!essentialCodesByGroup.getOrDefault(groupId, Collections.emptySet()).isEmpty()) {
+            List<com.dongguk.graduation_be.requirement.entity.CourseGroupItem> essentialItems =
+                    essentialItemsByGroup.getOrDefault(groupId, Collections.emptyList());
+            if (essentialItems.isEmpty()) {
                 continue;
             }
-            Set<String> expectedCourseCodes = groupCourseCodes.getOrDefault(groupId, Collections.emptySet());
 
-            long completedCount = expectedCourseCodes.stream()
-                    .filter(completedCourseCodes::contains)
-                    .count();
+            List<String> missingCourses = essentialItems.stream()
+                    .map(item -> item.getCourse().getCourseCode() + "(" + item.getCourse().getCourseName() + ")")
+                    .filter(codeAndName -> {
+                        String code = codeAndName.substring(0, codeAndName.indexOf('('));
+                        return !completedCourseCodes.contains(code);
+                    })
+                    .toList();
 
-            int shortage = (int) Math.max(0, mapping.getMinCount() - completedCount);
-            if (shortage > 0) {
-                String key = "group_min_count:" + mapping.getCourseGroup().getGroupName();
-                missed.put(key, shortage);
+            if (!missingCourses.isEmpty()) {
+                missed.put("group_essential:" + mapping.getCourseGroup().getGroupName(), missingCourses);
             }
         }
 

@@ -31,5 +31,5 @@ public class GraduationCreditCheckResponse {
     private Boolean passed;
 
     @JsonProperty("missed")
-    private Map<String, Double> missed;
+    private Map<String, Object> missed;
 }
