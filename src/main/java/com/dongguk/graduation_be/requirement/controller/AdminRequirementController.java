@@ -1,9 +1,11 @@
 package com.dongguk.graduation_be.requirement.controller;
 
 import com.dongguk.graduation_be.requirement.dto.request.CreateDepartmentRequest;
+import com.dongguk.graduation_be.requirement.dto.request.CreateAreaRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateDepartmentRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateGraduationRequirementRequest;
+import com.dongguk.graduation_be.requirement.service.AreaRequirementService;
 import com.dongguk.graduation_be.requirement.service.DepartmentService;
 import com.dongguk.graduation_be.requirement.service.GraduationRequirementService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
 public class AdminRequirementController {
+    private final AreaRequirementService areaRequirementService;
     private final DepartmentService departmentService;
     private final GraduationRequirementService graduationRequirementService;
 
@@ -93,6 +96,25 @@ public class AdminRequirementController {
             return ResponseEntity.ok("Graduation requirement deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error deleting graduation requirement: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/area-requirements")
+    public ResponseEntity<?> getAllAreaRequirements() {
+        try {
+            return ResponseEntity.ok(areaRequirementService.getAllAreaRequirements());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching area requirements: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/area-requirements")
+    public ResponseEntity<String> createAreaRequirement(@RequestBody CreateAreaRequirementRequest request) {
+        try {
+            Long newId = areaRequirementService.createAreaRequirement(request);
+            return ResponseEntity.ok("AreaRequirement created with ID: " + newId);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error creating area requirement: " + e.getMessage());
         }
     }
 
