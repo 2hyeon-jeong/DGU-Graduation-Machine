@@ -30,8 +30,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    profiles:
-      - app
+    restart: unless-stopped
 
 volumes:
   postgres_data:
