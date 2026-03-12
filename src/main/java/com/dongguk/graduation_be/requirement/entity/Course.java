@@ -22,4 +22,9 @@ public class Course {
     @NotBlank
     @Column(nullable = false, unique = true)
     private String courseCode;
+
+    public void update(String courseName, String courseCode) {
+        this.courseName = courseName;
+        this.courseCode = courseCode;
+    }
 }

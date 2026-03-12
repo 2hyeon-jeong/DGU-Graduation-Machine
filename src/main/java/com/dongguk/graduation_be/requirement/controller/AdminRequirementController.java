@@ -2,21 +2,27 @@ package com.dongguk.graduation_be.requirement.controller;
 
 import com.dongguk.graduation_be.requirement.dto.request.CreateDepartmentRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateAreaRequirementRequest;
+import com.dongguk.graduation_be.requirement.dto.request.CreateCourseRequest;
 import com.dongguk.graduation_be.requirement.dto.request.CreateGraduationRequirementRequest;
+import com.dongguk.graduation_be.requirement.dto.response.CourseCsvImportResponse;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateDepartmentRequest;
+import com.dongguk.graduation_be.requirement.dto.request.UpdateCourseRequest;
 import com.dongguk.graduation_be.requirement.dto.request.UpdateGraduationRequirementRequest;
 import com.dongguk.graduation_be.requirement.service.AreaRequirementService;
+import com.dongguk.graduation_be.requirement.service.CourseService;
 import com.dongguk.graduation_be.requirement.service.DepartmentService;
 import com.dongguk.graduation_be.requirement.service.GraduationRequirementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin")
 public class AdminRequirementController {
     private final AreaRequirementService areaRequirementService;
+    private final CourseService courseService;
     private final DepartmentService departmentService;
     private final GraduationRequirementService graduationRequirementService;
 
@@ -115,6 +121,55 @@ public class AdminRequirementController {
             return ResponseEntity.ok("AreaRequirement created with ID: " + newId);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error creating area requirement: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/courses")
+    public ResponseEntity<?> getAllCourses() {
+        try {
+            return ResponseEntity.ok(courseService.getAllCourses());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching courses: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/courses")
+    public ResponseEntity<String> createCourse(@RequestBody CreateCourseRequest request) {
+        try {
+            Long newId = courseService.createCourse(request);
+            return ResponseEntity.ok("Course created with ID: " + newId);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error creating course: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/courses")
+    public ResponseEntity<String> updateCourse(@RequestBody UpdateCourseRequest request) {
+        try {
+            courseService.updateCourse(request);
+            return ResponseEntity.ok("Course updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error updating course: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/courses/{id}")
+    public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
+        try {
+            courseService.deleteCourse(id);
+            return ResponseEntity.ok("Course deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error deleting course: " + e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/courses/import-csv", consumes = "multipart/form-data")
+    public ResponseEntity<?> importCoursesFromCsv(@RequestParam("file") MultipartFile file) {
+        try {
+            CourseCsvImportResponse response = courseService.importCoursesFromCsv(file);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error importing courses from CSV: " + e.getMessage());
         }
     }
 
