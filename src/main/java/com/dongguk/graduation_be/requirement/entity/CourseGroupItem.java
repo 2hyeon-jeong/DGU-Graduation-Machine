@@ -36,4 +36,10 @@ public class CourseGroupItem {
     @NotNull
     @Column(nullable = false)
     private Boolean isEssential;
+
+    public void update(CourseGroup courseGroup, Course course, Boolean isEssential) {
+        this.courseGroup = courseGroup;
+        this.course = course;
+        this.isEssential = isEssential;
+    }
 }
